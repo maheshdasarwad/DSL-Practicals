@@ -49,23 +49,6 @@ class Parlor
             size--;
         }
 
-        bool isEmpty()
-        {
-            if(size == 0) return true;
-            return false;
-        }
-
-        bool isFull()
-        {
-            if(size == length) return true;
-            return false;
-        }
-
-        int TotalOrder()
-        {
-            return size;
-        }
-
         void display()
         {
             if(size == 0)
