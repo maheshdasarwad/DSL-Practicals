@@ -49,16 +49,18 @@ class PinnacleClub
     public :
         PinnacleClub()
         {
-            string val = "Mahesh";
-            double prno =123;
-            student *newNode = new student(val , prno);
-            president = newNode;
-            secretary = newNode;
-            len = 1;
+            president = secretary = NULL;
+            len = 0;
         }
 
         void display()
         {
+            if (president == nullptr) //if list is empty
+            {
+                cout << "\nList is empty.\n";
+                return;
+            }
+            
             student *temp = president;
             while(temp != nullptr)
             {
@@ -70,15 +72,27 @@ class PinnacleClub
 
         void addpresident(string val , double prno)
         {
-            student *newNode = new student(val , prno);
-            newNode -> next = president;
-            president = newNode;
+            student *newMem = new student(val , prno);
+            if(president == NULL) //if list is empty
+            {
+                president = secretary = newMem;
+                len++;
+                return;
+            }
+            newMem -> next = president;
+            president = newMem;
             len++;
         }
 
         void addsecretary(string val , double prno)
         {
             student *newMem = new student(val, prno);
+            if(president == NULL) //if list is empty
+            {
+                president = secretary = newMem;
+                len++;
+                return;
+            }
             secretary -> next = newMem;
             secretary = newMem;
             len++;
@@ -87,7 +101,20 @@ class PinnacleClub
         void addMember(string val , double prno)
         {
             student *newMem = new student(val , prno);
-            student *temp = president;
+            if(president == NULL) //if list is empty
+            {
+                president = secretary = newMem;
+                len++;
+                return;
+            }
+            if (president == secretary) //if list has only president
+            {
+                president->next = newMem;
+                newMem->next = secretary;
+                len++;
+                return;
+            }
+            student *temp = president; //normal case
             while(temp -> next != secretary)
             {
                 temp = temp -> next;
@@ -97,17 +124,16 @@ class PinnacleClub
             len++;
         }
 
-
         void deleteMember(double prno)
         {
-            if(president == NULL)
+            if(president == NULL)//case 1 : empty list
             {
                 cout<<"\nList is empty";
                 return;
             }
 
             student *temp = president;
-            if(temp -> prn == prno)
+            if(temp -> prn == prno) //case 2 : if prn is president
             {
                 //Deleting president
                 president = president -> next;
@@ -121,11 +147,12 @@ class PinnacleClub
             {
                 temp = temp -> next;
             }
+
             if(temp -> next == NULL) cout<<"\nMember not found.";
             else
             {
                 student *toDelete = temp -> next;
-                if(toDelete == secretary)
+                if(toDelete == secretary) //case 3 : if prn is secretary
                 {
                     secretary = temp;
                     cout<<"\nSecretary ";
@@ -141,12 +168,22 @@ class PinnacleClub
         {
             return len;
         }
+
+        void concatenate(PinnacleClub &club2)
+        {
+            if(secretary != NULL) 
+            {
+                secretary -> next = club2.president;
+                secretary = club2.secretary;
+                cout<<"\nConcatenation Successfull.";
+            }
+        }
 };
 
 int main()
 {
     
-    PinnacleClub ll;
+    PinnacleClub club1 , club2;
 
     while(true)
     {
@@ -157,7 +194,8 @@ int main()
         cout<<"\n4. To display members.";
         cout<<"\n5. To remove members.";
         cout<<"\n6. To Know total members.";
-        cout<<"\n7. To Exit";
+        cout<<"\n7. To Concatenate clubs.";
+        cout<<"\n8. To Exit";
         cout<<"\nChoose correct option : ";
         cin>>ch;
         cout<<endl;
@@ -172,7 +210,7 @@ int main()
             cout<<"Enter PRN number : ";
             cin>>prno;
 
-            ll.addpresident(val,prno);
+            club1.addpresident(val,prno);
 
         }
 
@@ -185,9 +223,7 @@ int main()
             getline(cin,val);
             cout<<"Enter PRN number : ";
             cin>>prno;
-
-            ll.addsecretary(val,prno);
-            
+            club1.addsecretary(val,prno);
         }
 
         else if(ch == 3)
@@ -200,13 +236,12 @@ int main()
             cout<<"Enter PRN number : ";
             cin>>prno;
 
-            ll.addMember(val,prno);  
+            club1.addMember(val,prno);  
         }
-
 
         else if(ch == 4)
         {
-            ll.display();
+            club1.display();
             cout<<endl;
         }
 
@@ -215,16 +250,37 @@ int main()
             double prno;
             cout<<"\nEnter PRN number of member : ";
             cin>>prno;
-            ll.deleteMember(prno);
+            club1.deleteMember(prno);
             cout<<endl;
         }
         else if(ch == 6)
         {
-            cout<<"Total Number of members = "<<ll.totalMember();
+            cout<<"Total Number of members = "<<club1.totalMember();
             cout<<endl;
         }
 
         else if(ch == 7)
+        {
+            int n;
+            cout<<"\nEnter the number of members : ";
+            cin>>n;
+
+            for(int i = 0 ; i < n ; i++)
+            {
+                string val;
+                double prno;
+                cout<<"\nEnter name : ";
+                cin.ignore();
+                getline(cin,val);
+                cout<<"Enter PRN number : ";
+                cin>>prno;
+
+                club2.addsecretary(val,prno);
+            }
+            club1.concatenate(club2);
+        }
+
+        else if(ch == 8)
         {
             cout<<"\nExited successfully.....";
             break;
